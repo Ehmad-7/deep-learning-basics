@@ -4,18 +4,21 @@ import torch.optim as optim
 import torchvision.transforms as transforms
 from torchvision import datasets
 from torch.utils.data import DataLoader
+from torch.utils.data import random_split
 
 transform=transforms.Compose([
     transforms.ToTensor(),
 ])
 
-train_dataset=datasets.MNIST(root='data',train=True,download=True,transform=transform)
+full_train_dataset=datasets.MNIST(root='root',train=True,download=True,transform=transform)
 
-test_dataset=datasets.MNIST(root='data',train=False,download=True,transform=transform)
+train_size=int(0.8*len(full_train_dataset))
+val_size=len(full_train_dataset)-train_size
+
+train_dataset,val_dataset=random_split(full_train_dataset,[train_size,val_size])
 
 train_loader=DataLoader(dataset=train_dataset,batch_size=64,shuffle=True)
-
-test_loader=DataLoader(dataset=test_dataset,batch_size=64,shuffle=False)
+val_loader=DataLoader(dataset=val_dataset,batch_size=64,shuffle=False)
 
 class CNN(nn.Module):
     def __init__(self):
@@ -23,6 +26,7 @@ class CNN(nn.Module):
         self.conv1=nn.Conv2d(1,16,kernel_size=3,padding=1)
         self.relu=nn.ReLU()
         self.pool=nn.MaxPool2d(2,2)
+        self.dropout = nn.Dropout(0.5)
         self.conv2=nn.Conv2d(16,32,kernel_size=3,padding=1)
         self.fc1=nn.Linear(32*7*7,128)
         self.fc2=nn.Linear(128,10)
@@ -39,6 +43,7 @@ class CNN(nn.Module):
         x=x.view(x.size(0),-1)
         x=self.fc1(x)
         x=self.relu(x)
+        x = self.dropout(x)
         x=self.fc2(x)
 
         return x
@@ -63,15 +68,16 @@ for epoch in range(epochs):
         total_loss+=loss.item()
     print(f"Epoch [{epoch+1}/{epochs}], Loss: {total_loss:.4f}")
 
+model.eval()
 correct=0
 total=0
 
 with torch.no_grad():
-    for images, labels in test_loader:
+    for images, labels in val_loader:
         outputs=model(images)
         _, predicted=torch.max(outputs,1)
         total+=labels.size(0)
         correct+=(predicted==labels).sum().item()
 
-accuracy=100*correct/total
-print(f"Test Accuracy: {accuracy:.2f}%")
+val_acc = 100 * correct / total
+print(f"Validation Accuracy: {val_acc:.2f}%")

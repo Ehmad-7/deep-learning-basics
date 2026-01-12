@@ -19,6 +19,12 @@
 - Trained on MNIST handwritten digits
 - Achieved high classification accuracy
 
+## Preventing Overfitting
+
+- Split training data into train and validation sets
+- Evaluated validation accuracy each epoch
+- Added dropout layer to improve generalization
+
 ## Files
 - tensors.py: tensor creation and operations
 - first_nn.py: simple neural network forward pass
