@@ -44,11 +44,19 @@ I ran controlled experiments by changing one factor at a time:
 
 Final model uses batch size 128 and original CNN architecture.
 
+## Transfer Learning with ResNet
+
+- Used pretrained ResNet18 from ImageNet
+- Converted MNIST to 3-channel 224x224 images
+- Froze backbone and trained final classifier layer
+- Achieved high accuracy in very few epochs
+
 ## Files
 - tensors.py: tensor creation and operations
 - first_nn.py: simple neural network forward pass
 - train_nn.py: forward and backward pass with loss function and training loop
 - cnn_mnist.py: cnn for mnist digit classification
+-transfer_learning_mnist.py: transfer learning with pretrained ResNet18 on MNIST
 
 ## Tools
 - PyTorch
