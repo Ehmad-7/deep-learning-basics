@@ -17,8 +17,8 @@ val_size=len(full_train_dataset)-train_size
 
 train_dataset,val_dataset=random_split(full_train_dataset,[train_size,val_size])
 
-train_loader=DataLoader(dataset=train_dataset,batch_size=64,shuffle=True)
-val_loader=DataLoader(dataset=val_dataset,batch_size=64,shuffle=False)
+train_loader=DataLoader(dataset=train_dataset,batch_size=128,shuffle=True)
+val_loader=DataLoader(dataset=val_dataset,batch_size=128,shuffle=False)
 
 class CNN(nn.Module):
     def __init__(self):
@@ -28,8 +28,10 @@ class CNN(nn.Module):
         self.pool=nn.MaxPool2d(2,2)
         self.dropout = nn.Dropout(0.5)
         self.conv2=nn.Conv2d(16,32,kernel_size=3,padding=1)
-        self.fc1=nn.Linear(32*7*7,128)
+        self.conv3=nn.Conv2d(32,64,kernel_size=3,padding=1)
+        self.fc1=nn.Linear(64*3*3,128)
         self.fc2=nn.Linear(128,10)
+        
 
     def forward(self,x):
         x=self.conv1(x)
@@ -39,19 +41,28 @@ class CNN(nn.Module):
         x=self.conv2(x)
         x=self.relu(x)
         x=self.pool(x)
-        
-        x=x.view(x.size(0),-1)
-        x=self.fc1(x)
-        x=self.relu(x)
+
+        x = self.conv3(x)
+        x = self.relu(x)
+        x = self.pool(x)
+
+        x = x.view(x.size(0), -1)
+        x = self.fc1(x)
+        x = self.relu(x)
         x = self.dropout(x)
-        x=self.fc2(x)
+        x = self.fc2(x)
 
         return x
 
 model=CNN()
 
 criterion=nn.CrossEntropyLoss()
+
+# experiment 1 changing learning rate
+#optimizer=optim.Adam(model.parameters(),lr=0.0001)
+
 optimizer=optim.Adam(model.parameters(),lr=0.001)
+
 
 epochs=3
 

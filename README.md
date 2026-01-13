@@ -25,6 +25,25 @@
 - Evaluated validation accuracy each epoch
 - Added dropout layer to improve generalization
 
+I ran controlled experiments by changing one factor at a time:
+
+### Experiment 1: Learning Rate
+- LR = 0.0001
+- Result: slower learning, validation accuracy dropped (~94%)
+- Conclusion: too small LR caused underfitting in limited epochs
+
+### Experiment 2: Batch Size
+- Batch size = 128
+- Result: similar accuracy (~98.3%), more stable training
+- Conclusion: batch size affects stability, not major accuracy
+
+### Experiment 3: Deeper Network
+- Added extra convolution layer
+- Result: slightly lower accuracy (~97.9%)
+- Conclusion: extra capacity not needed for simple MNIST
+
+Final model uses batch size 128 and original CNN architecture.
+
 ## Files
 - tensors.py: tensor creation and operations
 - first_nn.py: simple neural network forward pass
