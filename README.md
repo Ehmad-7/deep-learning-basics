@@ -51,12 +51,35 @@ Final model uses batch size 128 and original CNN architecture.
 - Froze backbone and trained final classifier layer
 - Achieved high accuracy in very few epochs
 
+To simulate a real-world small dataset scenario, only 5,000 MNIST training images were used.
+
+### Without Data Augmentation
+Training images were used as-is.
+
+- Test Accuracy: **95.97%**
+
+### With Data Augmentation
+Applied random transformations during training:
+
+- RandomRotation(15)
+- RandomAffine(translate=0.1)
+
+This increases data diversity and improves generalization on harder datasets.
+
+- Test Accuracy: **95.90%**
+
+### Observations
+MNIST is a very simple dataset, so augmentation does not significantly improve accuracy.
+However, on real-world datasets (medical, satellite, industrial), augmentation plays a
+critical role in preventing overfitting and improving robustness.
+
 ## Files
 - tensors.py: tensor creation and operations
 - first_nn.py: simple neural network forward pass
 - train_nn.py: forward and backward pass with loss function and training loop
 - cnn_mnist.py: cnn for mnist digit classification
--transfer_learning_mnist.py: transfer learning with pretrained ResNet18 on MNIST
+- transfer_learning_mnist.py: transfer learning with pretrained ResNet18 on MNIST
+- cnn_mnist_aug: data augmentation on mnist
 
 ## Tools
 - PyTorch
